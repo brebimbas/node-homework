@@ -1,8 +1,11 @@
 const express = require("express");
 
 const app = express();
+const timeRouter = require("./routes/timeRoutes");
 
 app.use(express.json());
+
+app.use("/api", timeRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello, World!");
