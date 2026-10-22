@@ -12,6 +12,12 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use((req, res, next) => {
+  const timestamp = new Date().toISOString();
+  console.log(timestamp, ":", req.method, res.path, "(" + req.requestId + ")");
+  next();
+});
+
 // Assignment 3b and 3c ask you to add middleware in this file.
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
