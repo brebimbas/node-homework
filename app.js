@@ -7,9 +7,10 @@ global.tasks = [];
 const app = express();
 
 const userRouter = require("./routes/userRoutes");
+const timeRouter = require("./routes/timeRoutes");
+
 const notFound = require("./middleware/not-found");
 const errorHandler = require("./middleware/error-handler");
-const timeRouter = require("./routes/timeRoutes");
 
 app.use(express.json());
 
