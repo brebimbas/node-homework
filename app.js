@@ -1,11 +1,21 @@
 const express = require("express");
 
+global.user_id = null;
+global.users = [];
+global.tasks = [];
+
 const app = express();
+
+const userRouter = require("./routes/userRoutes");
 const timeRouter = require("./routes/timeRoutes");
+
+const notFound = require("./middleware/not-found");
+const errorHandler = require("./middleware/error-handler");
 
 app.use(express.json());
 
 app.use("/api", timeRouter);
+app.use("/api/users", userRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello, World!");
@@ -16,6 +26,8 @@ app.post("/testpost", (req, res) => {
     message: "POST route works",
   });
 });
+app.use(notFound);
+app.use(errorHandler);
 
 const port = process.env.PORT || 3000;
 
