@@ -8,19 +8,14 @@ const app = express();
 
 app.use((req, res, next) => {
   req.requestId = randomUUID();
+  res.setHeader("X-Request-Id", req.requestId);
   res.startAt = Date.now();
   next();
 });
 
 app.use((req, res, next) => {
   const timestamp = new Date().toISOString();
-  console.log(
-    "[" + timestamp + "]",
-    ":",
-    req.method,
-    req.path,
-    "(" + req.requestId + ")",
-  );
+  console.log(`[${timestamp}]: ${req.method} ${req.path} (${req.requestId})`);
   next();
 });
 
