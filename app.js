@@ -1,11 +1,24 @@
 const express = require("express");
 
+global.user_id = null;
+global.users = [];
+global.taks = [];
+
 const app = express();
+
+const userRouter = require("./routes/userRoutes");
+const notFound = require("./middleware/not-found");
+const errorHandler = require("./middleware/error-handler");
 const timeRouter = require("./routes/timeRoutes");
 
 app.use(express.json());
 
 app.use("/api", timeRouter);
+app.use("./api/users", userRouter);
+
+app.use(notFound);
+
+app.use(errorHandler);
 
 app.get("/", (req, res) => {
   res.send("Hello, World!");

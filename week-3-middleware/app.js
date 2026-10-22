@@ -1,15 +1,14 @@
 const express = require("express");
+const path = require("path");
 const dogsRouter = require("./routes/dogs");
 
 const app = express();
 
 // Assignment 3b and 3c ask you to add middleware in this file.
+app.use(express.json());
+app.use(express.static(path.join(__dirname, "public")));
 
-
-
-
-app.use("/", dogsRouter);// Do not remove this line
-
+app.use("/", dogsRouter); // Do not remove this line
 
 if (require.main === module) {
   app.listen(3000, () => {
@@ -18,4 +17,3 @@ if (require.main === module) {
 }
 
 module.exports = app;
-
