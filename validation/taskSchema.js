@@ -6,7 +6,7 @@ const taskSchema = new Joi.object({
 });
 
 const patchTaskSchema = new Joi.object({
-    title: Joi.string().trim().min(3).max(30).required(),
+    title: Joi.string().trim().min(3).max(30),
     isCompleted: Joi.boolean().default(false).not(null),
 }).min(1);
 

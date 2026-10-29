@@ -1,4 +1,4 @@
-const {taskSchema, patchSchema} = require('../validation/taskSchema.js');
+const {taskSchema, patchTaskSchema} = require('../validation/taskSchema.js');
 
 let taskId = 0;
 
@@ -16,9 +16,9 @@ const create = async (req, res) => {
     });
 
     const task = {
+        ...value,
         id: taskCounter(),
         userId: global.user_id.email,
-        ...value
     };
 
     global.tasks.push(task);
@@ -34,9 +34,10 @@ const index = async (req, res) => {
 
     if (userTasks.length === 0) {
         return res.status(404).json({
-            error: "No task found."
+            error: "No tasks found."
         });
     }
+
     const sanitizedTasks = userTasks.map((task) => {
         const {userId, ...sanitizedTask} = task;
         return sanitizedTask;
@@ -49,9 +50,21 @@ const index = async (req, res) => {
 const show = async (req, res) => {
     const taskId = parseInt(req.params?.id, 10);
 
-    if (isNaN(taskId)) {
+    if (!Number.isInteger(taskId) || !/^\d+$/.test(req.params?.id ?? "")) {
         return res.status(400).json({
-            error: "Invalid task id."
+            error: "Invalid task ID."
+        });
+    }
+
+    const task = global.tasks.find(
+        (item) =>
+            item.id === taskId &&
+            item.userId === global.user_id.email
+    );
+
+    if (!task) {
+        return res.status(404).json({
+            error: "Task not found."
         });
     }
 
@@ -63,7 +76,7 @@ const show = async (req, res) => {
 const update = async (req, res) => {
     if (!req.body) req.body = {};
 
-    const {error, value} = patchSchema.validate(req.body);
+    const {error, value} = patchTaskSchema.validate(req.body);
 
     if (error) return res.status(400).json({
         error: error.details[0].message

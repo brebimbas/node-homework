@@ -39,41 +39,58 @@ async function register(req, res) {
 
     const hashedPassword = await hashPassword(password);
 
+
     const newUser = {
-        id: global.user_id,
+        id: global.users.length + 1,
         name,
         email,
         hashedPassword,
     };
 
     global.users.push(newUser);
-    global.user_id++;
 
-    res.status(201).json({
+    global.user_id = {
+        id: newUser.id,
+        name: newUser.name,
+        email: newUser.email,
+    };
+
+    return res.status(201).json({
         name: newUser.name,
         email: newUser.email,
     });
+
 }
 
+
 async function logon(req, res) {
-    const {email, password} = req.body;
-    const user = global.users.find((user) => user.email === email);
+    const {email, password} = req.body || {};
+
+    const user = global.users.find(
+        (user) => user.email === email
+    );
 
     const goodCredentials =
         user && await comparePassword(password, user.hashedPassword);
 
-    if (goodCredentials) {
-        global.user_id = user.id;
-        res.status(200).json({
-            name: user.name,
-            email: user.email,
-        });
-    } else {
-        res.status(401).json({
+    if (!goodCredentials) {
+        return res.status(401).json({
             message: "Email or Password does not match",
         });
     }
+
+    global.user_id = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+    };
+
+    return res.status(200).json({
+        name: user.name,
+        email: user.email,
+    });
 }
+
 
 function logoff(req, res) {
     global.user_id = null;
