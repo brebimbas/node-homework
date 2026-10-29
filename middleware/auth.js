@@ -1,10 +1,10 @@
-function auth(req, res){
-    if(!global.user_id) {
+function auth(req, res, next) {
+    if (!global.user_id) {
         return res.status(401).json({
             message: "Unauthorized",
-        })
+        });
     }
-    next()
+    next();
 }
 
-module.exports = auth
+module.exports = auth;
