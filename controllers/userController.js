@@ -4,7 +4,6 @@ const util = require("util");
 const scrypt = util.promisify(crypto.scrypt);
 const pool = require("../db/pg-pool");
 
-
 async function hashPassword(password) {
     const salt = crypto.randomBytes(16).toString("hex");
 
@@ -23,7 +22,6 @@ async function comparePassword(inputPassword, storedHash) {
         derivedKey
     );
 }
-
 
 async function register(req, res, next) {
     if (!req.body) req.body = {};
@@ -72,7 +70,6 @@ async function register(req, res, next) {
     });
 }
 
-
 async function logon(req, res) {
     const {email, password} = req.body || {};
 
@@ -109,7 +106,6 @@ async function logon(req, res) {
         email: user.email,
     });
 }
-
 
 function logoff(req, res) {
     global.user_id = null;

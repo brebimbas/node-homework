@@ -1,5 +1,5 @@
 const express = require("express");
-const pool = require("db/pg-pool");
+const pool = require("./db/pg-pool");
 
 global.user_id = null;
 global.users = [];
