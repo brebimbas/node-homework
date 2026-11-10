@@ -16,3 +16,6 @@ Content-Type: application/json
   "email": "{{email}}",
   "password": "{{password}}"
 }
+
+### Logout that user
+POST {{baseUrl}}/api/users/logoff

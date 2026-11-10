@@ -21,7 +21,7 @@ const create = async (req, res) => {
     const result = await pool.query(
         `INSERT INTO tasks (title, is_completed, user_id)
          VALUES ($1, $2, $3) RETURNING id, title, is_completed`,
-        [value.title, value.isCompleted, global.user_id]
+        [value.title, value.isCompleted, global.user_id.id]
     );
 
     const task = result.rows[0];
@@ -33,7 +33,7 @@ const index = async (req, res) => {
         `SELECT id, title, is_completed
          FROM tasks
          WHERE user_id = $1`,
-        [global.user_id]
+        [global.user_id.id]
     );
     const tasks = result.rows;
     if (tasks.length === 0) {
@@ -58,7 +58,7 @@ const show = async (req, res) => {
          FROM tasks
          WHERE id = $1
            AND user_id = $2`,
-        [taskId, global.user_id]
+        [taskId, global.user_id.id]
     );
 
     const task = result.rows[0];
@@ -115,7 +115,7 @@ const update = async (req, res) => {
          SET ${setClauses}
          WHERE id = ${idParm}
            AND user_id = ${userParm} RETURNING id, title, is_completed`,
-        [...Object.values(taskChange), taskId, global.user_id]
+        [...Object.values(taskChange), taskId, global.user_id.id]
     );
 
     const updatedTask = result.rows[0];
@@ -143,7 +143,7 @@ const deleteTask = async (req, res) => {
          FROM tasks
          WHERE id = $1
            AND user_id = $2 RETURNING id, title, is_completed`,
-        [taskId, global.user_id]
+        [taskId, global.user_id.id]
     );
 
     const deletedTask = result.rows[0];
