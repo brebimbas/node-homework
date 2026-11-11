@@ -58,11 +58,7 @@ async function register(req, res, next) {
 
     const user = result.rows[0];
 
-    global.user_id = {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-    };
+    global.user_id = user.id;
 
     return res.status(201).json({
         name: user.name,
