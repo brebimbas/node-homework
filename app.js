@@ -1,10 +1,6 @@
 const express = require("express");
 const pool = require("./db/pg-pool");
 
-global.user_id = null;
-global.users = [];
-global.tasks = [];
-
 const app = express();
 
 //Routes
