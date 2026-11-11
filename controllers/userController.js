@@ -95,11 +95,7 @@ async function logon(req, res) {
         });
     }
 
-    global.user_id = {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-    };
+    global.user_id = user.id;
 
     return res.status(200).json({
         name: user.name,
