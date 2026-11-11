@@ -1,0 +1,28 @@
+@taskId = 1
+
+### Create a task
+POST {{baseUrl}}/api/tasks
+Content-Type: application/json
+
+{
+  "title": "HTTP Client test task",
+  "isCompleted": false
+}
+
+### List tasks
+GET {{baseUrl}}/api/tasks
+
+### Show a task
+GET {{baseUrl}}/api/tasks/{{taskId}}
+
+### Update a task
+PATCH {{baseUrl}}/api/tasks/{{taskId}}
+Content-Type: application/json
+
+{
+  "title": "Update HTTP Client test task",
+  "isCompleted": true
+}
+
+### Delete a task
+DELETE {{baseUrl}}/api/tasks/{{taskId}}

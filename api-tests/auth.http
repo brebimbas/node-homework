@@ -1,0 +1,21 @@
+### Register a user
+POST {{baseUrl}}/api/users/register
+Content-Type: application/json
+
+{
+  "name": "{{name}}",
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### Login with that user
+POST {{baseUrl}}/api/users/logon
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### Logout that user
+POST {{baseUrl}}/api/users/logoff
