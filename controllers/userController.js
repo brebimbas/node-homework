@@ -37,27 +37,22 @@ async function register(req, res, next) {
         });
     }
 
-    let result = null;
-    value.hashed_password = await hashPassword(value.password);
-    // the code to here is like the in-memory version
+    value.hashedPassword = await hashPassword(value.password)
+    delete value.password
+
+    let user = null;
     try {
-        result = await pool.query(
-            `INSERT INTO users (email, name, hashed_password)
-             VALUES ($1, $2, $3) RETURNING id, email, name`,
-            [value.email, value.name, value.hashed_password],
-        ); // note that you use a parameterized query
-    } catch (e) {
-        // the email might already be registered
-        if (e.code === "23505") {
-            return res.status(400).json({
-                message: "Email is already registered",
-            });
+        user = await prisma.user.create({
+            data: { name, email, hashedPassword },
+            select: { name: true, email: true, id: true} // specify the column values to return
+        });
+    } catch (err) {
+        if (err.name === "PrismaClientKnownRequestError" && err.code === "P2002") {
+            // send the appropriate error back -- the email was already registered
+        } else {
+            return next(err); // the error handler takes care of other errors
         }
-
-        return next(e); // all other errors get passed to the error handler
     }
-
-    const user = result.rows[0];
 
     global.user_id = user.id;
 
@@ -75,7 +70,7 @@ async function logon(req, res) {
     const user = await prisma.user.findUnique({
         where: {email: normalizedEmail},
     });
-    
+
     if (!user) {
         return res.status(401).json({
             message: "Email or Password does not match",
