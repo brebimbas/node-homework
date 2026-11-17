@@ -13,13 +13,19 @@ const create = async (req, res) => {
         });
     }
 
-    const result = await pool.query(
-        `INSERT INTO tasks (title, is_completed, user_id)
-         VALUES ($1, $2, $3) RETURNING id, title, is_completed`,
-        [value.title, value.isCompleted, global.user_id]
-    );
+    const task = await prisma.task.create({
+        date: {
+            title: value.title,
+            isCompleted: value.isCompleted,
+            userId: value.userId,
+        },
+        select: {
+            id: true,
+            title: true,
+            isCompleted: true,
+        }
+    });
 
-    const task = result.rows[0];
     res.status(201).json(task);
 };
 
