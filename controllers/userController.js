@@ -37,14 +37,18 @@ async function register(req, res, next) {
         });
     }
 
-    value.hashedPassword = await hashPassword(value.password)
-    delete value.password
+    value.hashedPassword = await hashPassword(value.password);
+    delete value.password;
 
     let user = null;
     try {
         user = await prisma.user.create({
-            data: { name, email, hashedPassword },
-            select: { name: true, email: true, id: true} // specify the column values to return
+            data: {
+                name: value.name,
+                email: value.email,
+                hashedPassword: value.hashedPassword
+            },
+            select: {name: true, email: true, id: true} // specify the column values to return
         });
     } catch (err) {
         if (err.name === "PrismaClientKnownRequestError" && err.code === "P2002") {
