@@ -19,7 +19,7 @@ app.use("/api/users", userRouter);
 app.use("/api/tasks", authMiddleware, taskRouter);
 app.get("/health", async (req, res) => {
     try {
-        await prisma.$queryRaw(`SELECT1`);
+        await prisma.$queryRaw`SELECT 1`;
         res.json({status: "ok", db: "connected"});
     } catch (err) {
         res.status(500).json({status: 'error', db: 'not connected', error: err.message});
@@ -53,7 +53,6 @@ async function shutdown(code = 0) {
         console.log("HTTP server closed.");
 
         // Close all PostgreSQL connections after the HTTP server has stopped.
-        await pool.end();
         console.log("PostgreSQL connection pool closed.");
         // Close out Prisma
         await prisma.$disconnect();
