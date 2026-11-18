@@ -51,8 +51,11 @@ async function register(req, res, next) {
             select: {name: true, email: true, id: true} // specify the column values to return
         });
     } catch (err) {
-        if (err.name === "PrismaClientKnownRequestError" && err.code === "P2002") {
-            // send the appropriate error back -- the email was already registered
+        if (err.name === "PrismaClientKnownRequestError" &&
+            err.code === "P2002") {
+            return res.status(400).json({
+                message: "Email is already registered",
+            });
         } else {
             return next(err); // the error handler takes care of other errors
         }
