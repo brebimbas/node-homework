@@ -14,10 +14,10 @@ const create = async (req, res) => {
     }
 
     const task = await prisma.task.create({
-        date: {
+        data: {
             title: value.title,
             isCompleted: value.isCompleted,
-            userId: value.userId,
+            userId: global.user_id,
         },
         select: {
             id: true,
