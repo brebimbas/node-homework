@@ -25,3 +25,4 @@ http-client.env.json
 # macOS System Files
 # ===========================================
 /.idea
+/generated/prisma
