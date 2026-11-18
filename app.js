@@ -1,5 +1,4 @@
 const express = require("express");
-const pool = require("./db/pg-pool");
 const prisma = require("./db/prisma");
 
 const app = express();
