@@ -42,32 +42,38 @@ const index = async (req, res) => {
     return res.status(200).json(tasks);
 };
 
-const show = async (req, res) => {
-    const taskId = parseInt(req.params?.id, 10);
+const show = async (req, res, next) => {
+    const id = parseInt(req.params?.id, 10);
 
-    if (!Number.isInteger(taskId) || !/^\d+$/.test(req.params?.id ?? "")) {
+    if (!Number.isInteger(id) || !/^\d+$/.test(req.params?.id ?? "")) {
         return res.status(400).json({
             error: "Invalid task ID.",
         });
     }
 
-    const result = await pool.query(
-        `SELECT id, title, is_completed
-         FROM tasks
-         WHERE id = $1
-           AND user_id = $2`,
-        [taskId, global.user_id]
-    );
-
-    const task = result.rows[0];
-
-    if (!task) {
-        return res.status(404).json({
-            error: "Task not found.",
+    try {
+        const task = await prisma.task.findUnique({
+            where: {
+                id,
+                userId: global.user_id,
+            },
+            select: {
+                id: true,
+                title: true,
+                isCompleted: true,
+            },
         });
-    }
 
-    return res.status(200).json(task);
+        if (!task) {
+            return res.status(404).json({
+                error: "Task not found.",
+            });
+        }
+
+        return res.status(200).json(task);
+    } catch (err) {
+        return next(err);
+    }
 };
 
 const update = async (req, res, next) => {
