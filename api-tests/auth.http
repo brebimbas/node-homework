@@ -1,3 +1,5 @@
+@userId = 1
+
 ### Register a user
 POST {{baseUrl}}/api/users/register
 Content-Type: application/json
@@ -19,3 +21,6 @@ Content-Type: application/json
 
 ### Logout that user
 POST {{baseUrl}}/api/users/logoff
+
+### Get the users Incompleted Tasks
+GET {{baseUrl}}/api/users/{{userId}}

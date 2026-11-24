@@ -31,16 +31,55 @@ const create = async (req, res) => {
 };
 
 const index = async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
     const tasks = await prisma.task.findMany({
-        where: {userId: global.user_id,},
-        select: {title: true, isCompleted: true, id: true}
+        where: {
+            userId: global.user_id,
+        },
+        select: {
+            id: true,
+            title: true,
+            isCompleted: true,
+            priority: true,
+            createdAt: true,
+            User: {
+                select: {
+                    name: true,
+                    email: true
+                }
+            }
+        },
+        skip: skip,
+        take: limit,
+        orderBy: {createdAt: 'desc'}
     });
+
+    const totalTasks = await prisma.task.count({
+        where: {userId: global.user_id}
+    });
+
+    const pagination = {
+        page,
+        limit,
+        total: totalTasks,
+        pages: Math.ceil(totalTasks / limit),
+        hasNext: page * limit < totalTasks,
+        hasPrev: page > 1
+    };
+
+    res.status(200).json({
+        tasks,
+        pagination
+    });
+
     if (tasks.length === 0) {
         return res.status(404).json({
             error: "No tasks found."
         });
     }
-    return res.status(200).json(tasks);
 };
 
 const show = async (req, res, next) => {
