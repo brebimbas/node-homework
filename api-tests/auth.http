@@ -10,7 +10,7 @@ Content-Type: application/json
   "password": "{{password}}"
 }
 
-### Login with that user+
+### Login with that user
 POST {{baseUrl}}/api/users/logon
 Content-Type: application/json
 

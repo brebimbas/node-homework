@@ -29,6 +29,7 @@ async function register(req, res, next) {
     const {error, value} = userSchema.validate(req.body, {
         abortEarly: false,
     });
+
     if (error) {
         return res.status(400).json({
             message: "Validation failed",
@@ -39,33 +40,78 @@ async function register(req, res, next) {
     value.hashedPassword = await hashPassword(value.password);
     delete value.password;
 
-    let user = null;
     try {
-        user = await prisma.user.create({
-            data: {
-                name: value.name,
-                email: value.email,
-                hashedPassword: value.hashedPassword
-            },
-            select: {name: true, email: true, id: true} // specify the column values to return
+        const result = await prisma.$transaction(async (tx) => {
+            const newUser = await tx.user.create({
+                data: {
+                    email: value.email,
+                    name: value.name,
+                    hashedPassword: value.hashedPassword,
+                },
+                select: {
+                    id: true,
+                    email: true,
+                    name: true,
+                },
+            });
+
+            const welcomeTaskData = [
+                {
+                    title: "Complete your profile",
+                    userId: newUser.id,
+                    priority: "medium",
+                },
+                {
+                    title: "Add your first task",
+                    userId: newUser.id,
+                    priority: "high",
+                },
+                {
+                    title: "Explore the app",
+                    userId: newUser.id,
+                    priority: "low",
+                },
+            ];
+
+            await tx.task.createMany({
+                data: welcomeTaskData,
+            });
+
+            const welcomeTasks = await tx.task.findMany({
+                where: {
+                    userId: newUser.id,
+                    title: {
+                        in: welcomeTaskData.map((task) => task.title),
+                    },
+                },
+                select: {
+                    id: true,
+                    title: true,
+                    isCompleted: true,
+                    userId: true,
+                    priority: true,
+                },
+            });
+
+            return {user: newUser, welcomeTasks};
+        });
+
+        global.user_id = result.user.id;
+
+        return res.status(201).json({
+            user: result.user,
+            welcomeTasks: result.welcomeTasks,
+            transactionStatus: "success",
         });
     } catch (err) {
-        if (err.name === "PrismaClientKnownRequestError" &&
-            err.code === "P2002") {
+        if (err.code === "P2002") {
             return res.status(400).json({
-                message: "Email is already registered",
+                error: "Email already registered",
             });
-        } else {
-            return next(err); // the error handler takes care of other errors
         }
+
+        return next(err);
     }
-
-    global.user_id = user.id;
-
-    return res.status(201).json({
-        name: user.name,
-        email: user.email,
-    });
 }
 
 async function logon(req, res) {
