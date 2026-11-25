@@ -1,0 +1,7 @@
+@userId = 1
+
+### Analytics Of a User
+GET {{baseUrl}}/api/analytics/users/{{userId}}
+
+### Analytics All Users
+GET {{baseUrl}}/api/analytics/users
