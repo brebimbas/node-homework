@@ -15,6 +15,12 @@ GET {{baseUrl}}/api/tasks
 ### Show a task
 GET {{baseUrl}}/api/tasks/{{taskId}}
 
+### Search Filter Task
+GET {{baseUrl}}/api/tasks?find=test&page=1&limit=10
+
+### Sorting Task
+GET {{baseUrl}}/api/tasks?sortBy=createdAt&sortDirection=desc
+
 ### Update a task
 PATCH {{baseUrl}}/api/tasks/{{taskId}}
 Content-Type: application/json

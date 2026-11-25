@@ -46,6 +46,19 @@ const index = async (req, res) => {
         };
     }
 
+    const getOrderBy = (query) => {
+        const validSortFields = ["title", "priority", "createdAt", "id", "isCompleted"];
+        const sortBy = query.sortBy || "createdAt";
+        const sortDirection = query.sortDirection === "asc" ? "asc" : "desc";
+
+        if (validSortFields.includes(sortBy)) {
+            return {[sortBy]: sortDirection};
+        }
+        return {createdAt: "desc"};
+    };
+
+    const orderBy = getOrderBy(req.query);
+
     const tasks = await prisma.task.findMany({
         where: whereClause,
         select: {
@@ -63,7 +76,7 @@ const index = async (req, res) => {
         },
         skip: skip,
         take: limit,
-        orderBy: {createdAt: 'desc'}
+        orderBy: orderBy
     });
 
     const totalTasks = await prisma.task.count({
