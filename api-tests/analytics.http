@@ -1,7 +1,11 @@
 @userId = 1
+@searchQuery = Review
 
 ### Analytics Of a User
 GET {{baseUrl}}/api/analytics/users/{{userId}}
 
 ### Analytics All Users
 GET {{baseUrl}}/api/analytics/users
+
+### Search Tasks
+GET {{baseUrl}}/api/analytics/tasks/search?q={{searchQuery}}

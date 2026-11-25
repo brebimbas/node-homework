@@ -122,4 +122,58 @@ async function getUsersWithStats(req, res, next) {
     }
 }
 
-module.exports = {getUserAnalytics, getUsersWithStats};
+async function searchTasks(req, res, next) {
+    const searchQuery =
+        typeof req.query.q === "string" ? req.query.q.trim() : "";
+
+    if (searchQuery.length < 2) {
+        return res.status(400).json({
+            error: "Search query must be at least 2 characters long",
+        });
+    }
+
+    const parsedLimit = parseInt(req.query.limit, 10);
+    const limit = Number.isFinite(parsedLimit)
+        ? Math.min(Math.max(parsedLimit, 1), 100)
+        : 20;
+
+    const searchPattern = `%${searchQuery}%`;
+    const startsWith = `${searchQuery}%`;
+
+    try {
+        const results = await prisma.$queryRaw`
+            SELECT t.id,
+                   t.title,
+                   t.is_completed AS "isCompleted",
+                   t.created_at   AS "createdAt",
+                   t.priority,
+                   t.user_id      AS "userId",
+                   u.name         AS "user_name"
+            FROM tasks t
+                     JOIN users u ON t.user_id = u.id
+            WHERE t.title ILIKE ${searchPattern}
+               OR u.name ILIKE ${searchPattern}
+            ORDER BY
+                CASE
+                WHEN t.title ILIKE ${searchQuery} THEN 1
+                WHEN t.title ILIKE ${startsWith} THEN 2
+                WHEN t.title ILIKE ${searchPattern} THEN 3
+                ELSE 4
+            END
+            ,
+                t.created_at DESC
+            LIMIT
+            ${limit}
+        `;
+
+        return res.status(200).json({
+            results,
+            query: searchQuery,
+            count: results.length,
+        });
+    } catch (err) {
+        return next(err);
+    }
+}
+
+module.exports = {getUserAnalytics, getUsersWithStats, searchTasks};
