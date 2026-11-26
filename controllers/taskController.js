@@ -140,16 +140,11 @@ const index = async (req, res) => {
         hasPrev: page > 1
     };
 
-    res.status(200).json({
-        tasks,
-        pagination
-    });
-
     if (tasks.length === 0) {
-        return res.status(404).json({
-            error: "No tasks found."
-        });
+        return res.status(404).json({error: "No tasks found."});
     }
+
+    return res.status(200).json({tasks, pagination});
 };
 
 const show = async (req, res, next) => {

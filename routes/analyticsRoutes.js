@@ -1,10 +1,11 @@
 const express = require("express");
 const analyticsController = require("../controllers/analyticsController");
+const authMiddleware = require("../middleware/auth");
 
 const router = express.Router();
 
-router.get("/users/:id", analyticsController.getUserAnalytics);
-router.get("/users", analyticsController.getUsersWithStats);
-router.get("/tasks/search", analyticsController.searchTasks);
+router.get("/users/:id", authMiddleware, analyticsController.getUserAnalytics);
+router.get("/users", authMiddleware, analyticsController.getUsersWithStats);
+router.get("/tasks/search", authMiddleware, analyticsController.searchTasks);
 
 module.exports = router;
