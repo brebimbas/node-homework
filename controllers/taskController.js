@@ -171,6 +171,11 @@ const show = async (req, res, next) => {
                 id: true,
                 title: true,
                 isCompleted: true,
+                User: {
+                    select: {
+                        name: true,
+                    }
+                }
             },
         });
 
@@ -219,9 +224,10 @@ const update = async (req, res, next) => {
                 userId: global.user_id,
             },
             select: {
+                id: true,
                 title: true,
                 isCompleted: true,
-                id: true,
+                priority: true,
             },
         });
 
@@ -272,5 +278,3 @@ const deleteTask = async (req, res, next) => {
 };
 
 module.exports = {create, index, show, update, deleteTask, bulkCreate};
-
-

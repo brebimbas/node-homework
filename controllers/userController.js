@@ -121,6 +121,12 @@ async function logon(req, res) {
 
     const user = await prisma.user.findUnique({
         where: {email: normalizedEmail},
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            hashedPassword: true,
+        }
     });
 
     if (!user) {
