@@ -9,11 +9,41 @@ Content-Type: application/json
   "isCompleted": false
 }
 
+###Create bluk tasks
+POST {{baseUrl}}/api/tasks/bulk
+Content-Type: application/json
+
+{
+  "tasks": [
+    {
+      "title": "Complete project documentation",
+      "isCompleted": false,
+      "priority": "medium"
+    },
+    {
+      "title": "Review pull request",
+      "isCompleted": false,
+      "priority": "high"
+    },
+    {
+      "title": "Organize workspace",
+      "isCompleted": false,
+      "priority": "low"
+    }
+  ]
+}
+
 ### List tasks
 GET {{baseUrl}}/api/tasks
 
 ### Show a task
 GET {{baseUrl}}/api/tasks/{{taskId}}
+
+### Search Filter Task
+GET {{baseUrl}}/api/tasks?find=test&page=1&limit=10
+
+### Sorting Task
+GET {{baseUrl}}/api/tasks?sortBy=createdAt&sortDirection=desc
 
 ### Update a task
 PATCH {{baseUrl}}/api/tasks/{{taskId}}

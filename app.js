@@ -6,6 +6,7 @@ const app = express();
 //Routes
 const userRouter = require("./routes/userRoutes");
 const taskRouter = require("./routes/taskRoutes");
+const analyticsRouter = require("./routes/analyticsRoutes");
 
 //Middleware
 const authMiddleware = require("./middleware/auth");
@@ -17,6 +18,7 @@ app.use(express.json());
 
 app.use("/api/users", userRouter);
 app.use("/api/tasks", authMiddleware, taskRouter);
+app.use("/api/analytics", analyticsRouter);
 app.get("/health", async (req, res) => {
     try {
         await prisma.$queryRaw`SELECT 1`;
